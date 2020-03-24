@@ -24,6 +24,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
 
     <script src="templates/header.js"></script>
+    <script src="templates/give_ppe_modal.js"></script>
 
     <style>
       a.logo-text {
@@ -38,6 +39,7 @@
   <body style="font-family: 'Open Sans', sans-serif; ">
 
     <div id='header'></div>
+    <div id="give-ppe-modal"></div>
 
     <div style="text-align: center; background-color: #EEE; padding: 40px 0 60px 0; margin-top: 20px">
       <div style="margin-bottom: 40px; font-size: 20px; font-weight: bold;">
@@ -114,7 +116,9 @@
       });
 
       var header_template = Handlebars.templates.header;
+      var give_ppe_template = Handlebars.templates.give_ppe_modal;
       $('#header').html(header_template);
+      $('#give-ppe-modal').html(give_ppe_template);
 
     </script>
 

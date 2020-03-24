@@ -24,6 +24,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
 
     <script src="templates/header.js"></script>
+    <script src="templates/give_ppe_modal.js"></script>
 
     <title>donate.supplies</title>
 
@@ -126,6 +127,8 @@
       </div>
     </div>
     </div>
+
+    <div id="give-ppe-modal"></div>
 
     <div id="dsmap" style="height: 450px; width: 100%"></div>
 
@@ -269,7 +272,9 @@
       }
 
       var header_template = Handlebars.templates.header;
+      var give_ppe_template = Handlebars.templates.give_ppe_modal;
       $('#header').html(header_template);
+      $('#give-ppe-modal').html(give_ppe_template);
 
     </script>
 
