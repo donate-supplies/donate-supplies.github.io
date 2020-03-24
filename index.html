@@ -1,1 +1,276 @@
-hello world
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&display=swap" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-IIED/eyOkM6ihtOiQsX2zizxFBphgnv1zbe1bKA+njdFzkr6cDNy16jfIKWu4FNH" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.runtime.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+
+    <script src="templates/header.js"></script>
+
+    <title>donate.supplies</title>
+
+    <style>
+      .ppe-num {
+        font-size: 12px;
+        margin: 0 auto;
+        font-weight: bold;
+      }
+      .ppe-type {
+        font-size: 11px;
+        margin: 0 auto;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        color: maroon;
+        margin-left: 40px;
+      }
+
+      a.logo-text {
+        color: inherit; /* blue colors for links too */
+        text-decoration: inherit;
+      }
+
+    </style>
+
+  </head>
+  <body style="font-family: 'Open Sans', sans-serif;">
+
+    <div id='header'></div>
+
+    <div style="background-color: #e0f2f1; margin-top: 15px; padding: 8px 0; border-top: 1px solid #b2dfdb; border-bottom: 1px solid #b2dfdb;">
+      <div class="container" style="text-align: center;">
+      <div class="row">
+        <div class="col-sm" style="text-align: center; ">
+          <div class="ppe-num" id="masks-num">
+            500
+          </div>
+          <div class="ppe-type">
+            masks
+          </div>
+        </div>
+        <div class="col-sm">
+          <div class="ppe-num" id="shields-num">
+            500
+          </div>
+          <div class="ppe-type">
+            shields
+          </div>
+        </div>
+        <div class="col-sm" style="text-align: center;">
+          <div class="ppe-num" id="wipes-num">
+            500
+          </div>
+          <div class="ppe-type">
+            wipes
+          </div>
+        </div>
+        <div class="col-sm" style="text-align: center;">
+          <div class="ppe-num" id="sanitizers-num">
+            500
+          </div>
+          <div class="ppe-type">
+            sanitizers
+          </div>
+        </div>
+        <div class="col-sm" style="text-align: center;">
+          <div class="ppe-num" id="goggles-num">
+            500
+          </div>
+          <div class="ppe-type">
+            goggles
+          </div>
+        </div>
+        <div class="col-sm" style="text-align: center;">
+          <div class="ppe-num" id="gowns-num">
+            500
+          </div>
+          <div class="ppe-type">
+            gowns
+          </div>
+        </div>
+        <div class="col-sm" style="text-align: center;">
+          <div class="ppe-num" id="respirators-num">
+            500
+          </div>
+          <div class="ppe-type">
+            respirators
+          </div>
+        </div>
+        <div class="col-sm" style="text-align: center;">
+          <div class="ppe-num" id="swabs-num">
+            500
+          </div>
+          <div class="ppe-type">
+            swabs
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div id="dsmap" style="height: 450px; width: 100%"></div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
+    <script>
+
+      var map_data = null;
+      var map = null;
+      var infowindow;
+      var ppe_num = new Array(8).fill(0);
+
+      function placeMarker(fdata) {
+        var place_id = fdata[7][1];
+        console.log(place_id);
+
+        var contentString = 
+          "<div style='margin: 10px'>" +
+          "<div style='font-weight:bold'><a href='"+fdata[6][1]+"' target='_new'>"+fdata[3][1]+"</a></div>" +
+          "<div>"+fdata[4][1]+"</div>" +
+          "<button type='button' class='btn btn-success btn-sm' style='margin-top: 10px'>Donate</button>" +
+          "<div style='margin: 10px 0 5px 0; font-weight: bold'>Needs:</div>" +
+          "<div style='margin:3px'>"+fdata[8][0]+": " + fdata[8][1] + "</div>" +
+          "<div style='margin:3px'>"+fdata[9][0]+": " + fdata[9][1] + "</div>" +
+          "<div style='margin:3px'>"+fdata[10][0]+": " + fdata[10][1] + "</div>" +
+          "<div style='margin:3px'>"+fdata[11][0]+": " + fdata[11][1] + "</div>" +
+          "<div style='margin:3px'>"+fdata[12][0]+": " + fdata[12][1] + "</div>" +
+          "<div style='margin:3px'>"+fdata[13][0]+": " + fdata[13][1] + "</div>" +
+          "<div style='margin:3px'>"+fdata[14][0]+": " + fdata[14][1] + "</div>" +
+          "<div style='margin:3px'>"+fdata[15][0]+": " + fdata[15][1] + "</div>" 
+          "</div>"
+          ;
+        var service = new google.maps.places.PlacesService(map);
+        service.getDetails({
+          placeId: place_id
+          }, function (result, status) {
+              if (status != google.maps.places.PlacesServiceStatus.OK) {
+                  return;
+              }
+              infowindow = new google.maps.InfoWindow({
+                content: contentString
+              });
+              var marker = new google.maps.Marker({
+                  map: map,
+                  place: {
+                      placeId: place_id,
+                      location: result.geometry.location
+                  },
+                  title: fdata[3][1]
+              });
+              marker.addListener('click', function() {
+                if (infowindow) infowindow.close();
+                infowindow = new google.maps.InfoWindow({
+                  content: contentString
+                });
+                infowindow.open(map, marker);
+              });
+          });
+      }
+
+      function updatePPE(data) {
+        map_data = data;
+        var place_id = null;
+        var fields = [];
+        for (i=0; i<16; i++) {
+          fields[i] = map_data.feed.entry[i].content.$t;
+        }
+        var num_rows = parseInt(map_data.feed.openSearch$totalResults.$t)/16 - 1;
+
+        var start_ind = 0;
+        var inner_ind = 0;
+        for (n=1; n<=num_rows; n++) {
+          console.log(n);
+          start_ind = n * 16;
+          inner_ind = 0;
+          var fdata = [];
+          for (var k=start_ind; k<start_ind+16; k++) {
+            var d = map_data.feed.entry[k].content.$t;
+            fdata[inner_ind] = [fields[inner_ind], d];
+
+            if (inner_ind >= 8) {
+              ppe_num[inner_ind-8] = ppe_num[inner_ind-8] + parseInt(d);
+              console.log(parseInt(d));
+              console.log(fdata[inner_ind] + ' count: ' + ppe_num[inner_ind-8]);
+            } 
+            inner_ind = inner_ind + 1;
+          }
+          placeMarker(fdata);
+
+        }
+        $('#masks-num').text(formatNum(ppe_num[0]));
+        $('#shields-num').text(formatNum(ppe_num[1]));
+        $('#wipes-num').text(formatNum(ppe_num[2]));
+        $('#sanitizers-num').text(formatNum(ppe_num[3]));
+        $('#goggles-num').text(formatNum(ppe_num[4]));
+        $('#gowns-num').text(formatNum(ppe_num[5]));
+        $('#respirators-num').text(formatNum(ppe_num[6]));
+        $('#swabs-num').text(formatNum(ppe_num[7]));
+      }
+
+      function formatNum(num) {
+        return numeral(num).format('0,0a');
+      }
+
+      function initMap() {
+
+        var map_center = new google.maps.LatLng(39.5, -98.35);;
+
+        map = new google.maps.Map(document.getElementById('dsmap'), {
+          zoom: 4,
+          center: map_center,
+          mapTypeId: 'roadmap'
+        });
+
+        var data_source = "https://spreadsheets.google.com/feeds/cells/19YzzHi0YIQ8NHgV34FoLesFkQKUNWdKHN0ZxLcfr2zk/1/public/full?alt=json-in-script&callback=updatePPE";
+
+        $.ajax({
+          url: data_source,
+          dataType: "jsonp", // jsonp
+          type: "POST",
+          jsonpCallback: 'updatePPE', // add this property
+          contentType: "application/json; charset=utf-8",
+          success: function (result, status, xhr) {
+              console.log(result);
+          },
+          error: function (xhr, status, error) {
+              console.log("Result: " + status + " " + error + " " + xhr.status + " " + xhr.statusText)
+          }
+        });
+      }
+
+      var header_template = Handlebars.templates.header;
+      $('#header').html(header_template);
+
+    </script>
+
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBnYsuXz7cx3Mq4j8ueQBDcP3D__bPjyw0&libraries=places&callback=initMap"></script>
+
+
+
+  </body>
+</html>
