@@ -158,7 +158,7 @@
 
         var contentString = 
           "<div style='margin: 10px'>" +
-          "<div style='font-weight:bold'><a href='"+fdata[6][1]+"' target='_new'>"+fdata[3][1]+"</a></div>" +
+          "<div style='font-weight:bold; font-size: 16px'><a href='"+fdata[6][1]+"' target='_new'>"+fdata[3][1]+"</a></div>" +
           "<div>"+fdata[4][1]+"</div>" +
           "<button type='button' class='btn btn-success btn-sm' style='margin-top: 10px'>Donate</button>" +
           "<div style='margin: 10px 0 5px 0; font-weight: bold'>Needs:</div>" +
@@ -207,23 +207,28 @@
         for (i=0; i<16; i++) {
           fields[i] = map_data.feed.entry[i].content.$t;
         }
-        var num_rows = parseInt(map_data.feed.openSearch$totalResults.$t)/16 - 1;
+        var num_rows = Math.ceil(parseInt(map_data.feed.openSearch$totalResults.$t)/16) - 1;
+        console.log("Num of rows: " + num_rows);
 
         var start_ind = 0;
         var inner_ind = 0;
         for (n=1; n<=num_rows; n++) {
-          console.log(n);
+          //console.log(n);
           start_ind = n * 16;
           inner_ind = 0;
           var fdata = [];
           for (var k=start_ind; k<start_ind+16; k++) {
-            var d = map_data.feed.entry[k].content.$t;
-            fdata[inner_ind] = [fields[inner_ind], d];
+            if (map_data.feed.entry[k] === undefined) {
+              fdata[inner_ind] = [fields[inner_ind], 0];
+            } else {
+              var d = map_data.feed.entry[k].content.$t;
+              fdata[inner_ind] = [fields[inner_ind], d];
+            }
 
             if (inner_ind >= 8) {
               ppe_num[inner_ind-8] = ppe_num[inner_ind-8] + parseInt(d);
-              console.log(parseInt(d));
-              console.log(fdata[inner_ind] + ' count: ' + ppe_num[inner_ind-8]);
+              //console.log(parseInt(d));
+              //console.log(fdata[inner_ind] + ' count: ' + ppe_num[inner_ind-8]);
             } 
             inner_ind = inner_ind + 1;
           }
