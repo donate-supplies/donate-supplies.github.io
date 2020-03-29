@@ -151,90 +151,94 @@
       var map = null;
       var infowindow;
       var ppe_num = new Array(8).fill(0);
+      var fields = [];
+      var service = null;
 
-      function placeMarker(fdata) {
-        var place_id = fdata[7][1];
-        console.log(place_id);
+      function placeMarker(rdata, num_rows) {
 
-        var contentString = 
-          "<div style='margin: 10px'>" +
-          "<div style='font-weight:bold; font-size: 16px'><a href='"+fdata[6][1]+"' target='_new'>"+fdata[3][1]+"</a></div>" +
-          "<div>"+fdata[4][1]+"</div>" +
-          "<button type='button' class='btn btn-success btn-sm' style='margin-top: 10px'>Donate</button>" +
-          "<div style='margin: 10px 0 5px 0; font-weight: bold'>Needs:</div>" +
-          "<div style='margin:3px'>"+fdata[8][0]+": " + fdata[8][1] + "</div>" +
-          "<div style='margin:3px'>"+fdata[9][0]+": " + fdata[9][1] + "</div>" +
-          "<div style='margin:3px'>"+fdata[10][0]+": " + fdata[10][1] + "</div>" +
-          "<div style='margin:3px'>"+fdata[11][0]+": " + fdata[11][1] + "</div>" +
-          "<div style='margin:3px'>"+fdata[12][0]+": " + fdata[12][1] + "</div>" +
-          "<div style='margin:3px'>"+fdata[13][0]+": " + fdata[13][1] + "</div>" +
-          "<div style='margin:3px'>"+fdata[14][0]+": " + fdata[14][1] + "</div>" +
-          "<div style='margin:3px'>"+fdata[15][0]+": " + fdata[15][1] + "</div>" 
-          "</div>"
-          ;
-        var service = new google.maps.places.PlacesService(map);
-        service.getDetails({
-          placeId: place_id
-          }, function (result, status) {
-              if (status != google.maps.places.PlacesServiceStatus.OK) {
-                  return;
-              }
+        //console.log("fdata: " + fdata);
+        var fdata = new Array();
+        for (var r=0; r<=num_rows+2; r++) {
+          var cdata = [];
+          fdata[r] = [];
+          for (var c=0; c<16; c++) {
+            fdata[r].push({[c]: ""});
+          }
+        }
+        console.log('fdata: ' + fdata[1][1]);
+
+        for(let i = 0 ; i < rdata.length; i++) {
+          var row = rdata[i][0];
+          var col = rdata[i][1];
+          var val = rdata[i][2];
+          console.log(row + ", " + col);
+          console.log("rdata: " + fdata[parseInt(row)][parseInt(col)]);
+          fdata[parseInt(row)][parseInt(col)] = val;
+        }
+
+        for (var k=2; k<=num_rows+1; k++) {
+          var contentString = 
+            "<div style='margin: 10px'>" +
+            "<div style='font-weight:bold; font-size: 16px'><a href='"+fdata[6][1]+"' target='_new'>"+fdata[k][3]+"</a></div>" +
+            "<div>"+fdata[k][4]+"</div>" +
+            "<button type='button' class='btn btn-success btn-sm' style='margin-top: 10px'>Donate</button>" +
+            "<div style='margin: 10px 0 5px 0; font-weight: bold'>Needs:</div>" +
+            "<div style='margin:3px'>"+fields[8]+": " + fdata[k][8] + "</div>" +
+            "<div style='margin:3px'>"+fields[9]+": " + fdata[k][9] + "</div>" +
+            "<div style='margin:3px'>"+fields[10]+": " + fdata[k][10] + "</div>" +
+            "<div style='margin:3px'>"+fields[11]+": " + fdata[k][11] + "</div>" +
+            "<div style='margin:3px'>"+fields[12]+": " + fdata[k][12] + "</div>" +
+            "<div style='margin:3px'>"+fields[13]+": " + fdata[k][13] + "</div>" +
+            "<div style='margin:3px'>"+fields[14]+": " + fdata[k][14] + "</div>" +
+            "<div style='margin:3px'>"+fields[15]+": " + fdata[k][15] + "</div>" 
+            "</div>"
+            ;
+            var place_id = new String(fdata[k][7]).split(',');
+            
+            var marker = new google.maps.Marker({
+                map: map,
+                position: {lat: parseFloat(place_id[1]), lng: parseFloat(place_id[2])},
+                title: fdata[k][3]
+            });
+            marker.addListener('click', function() {
+              if (infowindow) infowindow.close();
               infowindow = new google.maps.InfoWindow({
                 content: contentString
               });
-              var marker = new google.maps.Marker({
-                  map: map,
-                  place: {
-                      placeId: place_id,
-                      location: result.geometry.location
-                  },
-                  title: fdata[3][1]
-              });
-              marker.addListener('click', function() {
-                if (infowindow) infowindow.close();
-                infowindow = new google.maps.InfoWindow({
-                  content: contentString
-                });
-                infowindow.open(map, marker);
-              });
-          });
+              infowindow.open(map, marker);
+            });
+            
+          }
       }
 
       function updatePPE(data) {
         map_data = data;
         var place_id = null;
-        var fields = [];
+        fields = [];
         for (i=0; i<16; i++) {
           fields[i] = map_data.feed.entry[i].content.$t;
         }
         var num_rows = Math.ceil(parseInt(map_data.feed.openSearch$totalResults.$t)/16) - 1;
         console.log("Num of rows: " + num_rows);
 
-        var start_ind = 0;
-        var inner_ind = 0;
-        for (n=1; n<=num_rows; n++) {
-          //console.log(n);
-          start_ind = n * 16;
-          inner_ind = 0;
-          var fdata = [];
-          for (var k=start_ind; k<start_ind+16; k++) {
-            if (map_data.feed.entry[k] === undefined) {
-              fdata[inner_ind] = [fields[inner_ind], 0];
-            } else {
-              var d = map_data.feed.entry[k].content.$t;
-              fdata[inner_ind] = [fields[inner_ind], d];
+        var fdata = [];
+        for(let i = 0 ; i < map_data.feed.entry.length; i++) {
+    
+          let value = map_data.feed.entry[i];
+          var row = parseInt(value.gs$cell.row);
+          var col = parseInt(value.gs$cell.col)-1;
+          console.log("ROW: " + value.gs$cell.row + ", COL: " + col + ", " + JSON.stringify(value.gs$cell));
+          //console.log("value: " + JSON.stringify(value.gs$cell));
+          if (row > 1) {
+            fdata.push([row, col, value.gs$cell.$t]);
+            if (col>7) {
+              ppe_num[col-8] = ppe_num[col-8] + parseInt(value.gs$cell.$t);
             }
-
-            if (inner_ind >= 8) {
-              ppe_num[inner_ind-8] = ppe_num[inner_ind-8] + parseInt(d);
-              //console.log(parseInt(d));
-              //console.log(fdata[inner_ind] + ' count: ' + ppe_num[inner_ind-8]);
-            } 
-            inner_ind = inner_ind + 1;
           }
-          placeMarker(fdata);
-
         }
+
+        placeMarker(fdata, num_rows);
+
         $('#masks-num').text(formatNum(ppe_num[0]));
         $('#shields-num').text(formatNum(ppe_num[1]));
         $('#wipes-num').text(formatNum(ppe_num[2]));
@@ -258,6 +262,8 @@
           center: map_center,
           mapTypeId: 'roadmap'
         });
+
+        service = new google.maps.places.PlacesService(map);
 
         var data_source = "https://spreadsheets.google.com/feeds/cells/19YzzHi0YIQ8NHgV34FoLesFkQKUNWdKHN0ZxLcfr2zk/1/public/full?alt=json-in-script&callback=updatePPE";
 

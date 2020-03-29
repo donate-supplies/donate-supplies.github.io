@@ -85,6 +85,8 @@
       var hosp_name = null;
       var hosp_address = null
       var place_id = null;
+      var lat = null;
+      var lng = null;
       
         
       function initMap() {
@@ -99,8 +101,9 @@
             hosp_name = place.name;
             hosp_address = place.formatted_address;
             place_id = place.place_id;
-
-           //$('#scrap').text(JSON.stringify(place));
+            lat = place.geometry.location.lat.call();
+            lng = place.geometry.location.lng.call();
+            //$('#scrap').text(JSON.stringify(place));
         });
       }
 
@@ -109,7 +112,7 @@
         var p = {
           'entry.1182423845': hosp_name,
           'entry.704301711': hosp_address,
-          'entry.1304996944': place_id
+          'entry.1304996944': place_id + ',' + lat + ',' + lng
         }
         url_params = $.param(p);
         window.open("https://docs.google.com/forms/d/e/1FAIpQLSfkuVmKN4rfMFP58vr729TZ1MRvbgsmW2kYFFtmhlr65CNebA/viewform?" + url_params);
