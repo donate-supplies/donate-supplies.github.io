@@ -165,17 +165,15 @@
             fdata[r].push({[c]: ""});
           }
         }
-        console.log('fdata: ' + fdata[1][1]);
+        //console.log('fdata: ' + fdata[1][1]);
 
         for(let i = 0 ; i < rdata.length; i++) {
           var row = rdata[i][0];
           var col = rdata[i][1];
           var val = rdata[i][2];
-          console.log(row + ", " + col);
-          console.log("rdata: " + fdata[parseInt(row)][parseInt(col)]);
+          //console.log("rdata: " + fdata[parseInt(row)][parseInt(col)]);
           fdata[parseInt(row)][parseInt(col)] = val;
         }
-
         for (var k=2; k<=num_rows+1; k++) {
           var contentString = 
             "<div style='margin: 10px'>" +
@@ -200,13 +198,25 @@
                 position: {lat: parseFloat(place_id[1]), lng: parseFloat(place_id[2])},
                 title: fdata[k][3]
             });
-            marker.addListener('click', function() {
+
+            var infowindow = new google.maps.InfoWindow({
+              content: contentString
+            });
+
+            /*
+            marker.addListener('click', function(marker, event) {
               if (infowindow) infowindow.close();
-              infowindow = new google.maps.InfoWindow({
-                content: contentString
-              });
+
               infowindow.open(map, marker);
             });
+            */
+
+            google.maps.event.addListener(marker,'click', (function(marker,content,infowindow){ 
+              return function() {
+                  infowindow.setContent(content);
+                  infowindow.open(map,marker);
+              };
+            })(marker,contentString,infowindow));  
             
           }
       }
@@ -227,7 +237,7 @@
           let value = map_data.feed.entry[i];
           var row = parseInt(value.gs$cell.row);
           var col = parseInt(value.gs$cell.col)-1;
-          console.log("ROW: " + value.gs$cell.row + ", COL: " + col + ", " + JSON.stringify(value.gs$cell));
+          //console.log("ROW: " + value.gs$cell.row + ", COL: " + col + ", " + JSON.stringify(value.gs$cell));
           //console.log("value: " + JSON.stringify(value.gs$cell));
           if (row > 1) {
             fdata.push([row, col, value.gs$cell.$t]);
