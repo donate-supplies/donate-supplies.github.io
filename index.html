@@ -155,7 +155,7 @@
 
       function placeMarker(rdata, num_rows) {
 
-        //console.log("fdata: " + fdata);
+        console.log("Num rows: " + num_rows);
         var fdata = new Array();
         for (var r=0; r<=num_rows+2; r++) {
           var cdata = [];
@@ -165,12 +165,13 @@
           }
         }
         //console.log('fdata: ' + fdata[1][1]);
-
+        //console.log('rdata: ' + JSON.stringify(rdata));
         for(let i = 0 ; i < rdata.length; i++) {
+          console.log("r: " + JSON.stringify(rdata[i]));
           var row = rdata[i][0];
           var col = rdata[i][1];
           var val = rdata[i][2];
-          //console.log("rdata: " + fdata[parseInt(row)][parseInt(col)]);
+          //console.log("rdata: " + JSON.stringify(fdata[parseInt(row)][parseInt(col)]));
           fdata[parseInt(row)][parseInt(col)] = val;
         }
         var infowindow = new google.maps.InfoWindow();;
@@ -217,7 +218,7 @@
         for (i=0; i<16; i++) {
           fields[i] = map_data.feed.entry[i].content.$t;
         }
-        var num_rows = Math.ceil(parseInt(map_data.feed.openSearch$totalResults.$t)/16) - 1;
+        var num_rows = Math.ceil(parseInt(map_data.feed.openSearch$totalResults.$t)/16);
         console.log("Num of rows: " + num_rows);
 
         var fdata = [];
@@ -226,7 +227,7 @@
           let value = map_data.feed.entry[i];
           var row = parseInt(value.gs$cell.row);
           var col = parseInt(value.gs$cell.col)-1;
-          //console.log("ROW: " + value.gs$cell.row + ", COL: " + col + ", " + JSON.stringify(value.gs$cell));
+          console.log("ROW: " + value.gs$cell.row + ", COL: " + col + ", " + JSON.stringify(value.gs$cell));
           //console.log("value: " + JSON.stringify(value.gs$cell));
           if (row > 1) {
             fdata.push([row, col, value.gs$cell.$t]);
